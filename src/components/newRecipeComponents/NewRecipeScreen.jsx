@@ -1,22 +1,30 @@
 import React, { useState } from "react";
+
+//importing formik so we can use the form handling library
 import { Formik } from "formik";
 import "../../App.css";
 import axios from "axios";
 
   
   const NewRecipeScreen = () => {
+    //sets up a way to update "ingredients"
     const [ingredients, setIngredients] = useState([]);
+    //sets up a way to update "name"
     const [name, setName] = useState("");
+    //sets up a way to update quantity
     const [quantity, setQuantity] = useState("");
 
   
     const addIngredient = () => {
+      //runs the 3 functions to set ingredients(since it is an array, needs to get mapped), name, amd quantity
+      //note that name and quantity are the key/value items in each ingredient object inside the ingredients array
       setIngredients([...ingredients, { name, quantity }]);
       setName("");
       setQuantity("");
     };
   
     const initialValues = {
+      //sets up default form fields (using initialValues prop)
       type: "",
       recipeName: "",
       imageURL: "",
@@ -26,8 +34,9 @@ import axios from "axios";
       ingredients: [],
       instructions: "",
     };
-  
+    //post request
     const onSubmit = (values) => {
+      //the values object is the object created by the user's form entry
       values.ingredients = ingredients;
       console.log(values);
       axios.post(`https://recipes.devmountain.com/recipes`, values)
@@ -41,7 +50,7 @@ import axios from "axios";
     };
 
 
-
+    //ingredients is an array of objects that this function will dsiplay on the page
     const ingredientDisplay = ingredients.map((ing) => {
       return (
         <li>
@@ -53,13 +62,19 @@ import axios from "axios";
     return (
       <section>
         <h1>Add a new recipe</h1>
+      {/* creates a new formik component with initialValues and onSubmit props */}
         <Formik initialValues={initialValues} onSubmit={onSubmit}>
+          {/* //function that accepts values, handleChange, and handlesubmit functions*/}
           {({ values, handleChange, handleSubmit }) => (
+            // on submition of form, 
             <form onSubmit={handleSubmit}>
               <div >
                 <input
+                // add placeholder 
                   placeholder="Title"
+                  // set value of user's input as recipe name, pass it up to onSubmit/post
                   value={values.recipeName}
+                  //The handleChange method updates the form values based on the input's name attribute that was changed
                   onChange={handleChange}
                   name="recipeName"
                 />
@@ -133,6 +148,7 @@ import axios from "axios";
                     onChange={(e) => setQuantity(e.target.value)}
                   />
                 </div>
+                {/* show all the ingredients by running ingredientDisplay, which maps all added ingredients */}
                 <ul>{ingredientDisplay}</ul>
               </div>
               <button
@@ -143,8 +159,8 @@ import axios from "axios";
                 Add Another
               </button>
               <textarea
-                placeholder="Type your instructions"
-                rows={5}
+                placeholder="Add your instructions"
+                rows={6}
                 value={values.instructions}
                 onChange={handleChange}
                 name="instructions"
